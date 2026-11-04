@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Trailmark",
+    "slug": "trailmark",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.example.trailmark"
+    },
+    "android": {
+      "package": "com.example.trailmark"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Trailmark uses your location to measure the distance of your walks and runs, including when the screen is locked.",
+          "locationAlwaysPermission": "Trailmark uses your location to measure the distance of your walks and runs, including when the screen is locked.",
+          "locationWhenInUsePermission": "Trailmark uses your location to measure the distance of your walks and runs.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ]
+    ]
+  }
+}
