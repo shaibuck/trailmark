@@ -1,0 +1,48 @@
+name: Build iOS app
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create Expo project and add Trailmark
+        run: |
+          npx create-expo-app@latest app --template blank --no-install
+          cd app
+          npm install
+          npx expo install expo-location expo-task-manager @react-native-async-storage/async-storage react-native-svg react-native-safe-area-context
+          cp ../App.js ./App.js
+          cp ../app.json ./app.json
+
+      - name: Generate the iOS project
+        working-directory: app
+        run: npx expo prebuild --platform ios
+
+      - name: Build (unsigned)
+        working-directory: app/ios
+        run: |
+          WS=$(ls -d *.xcworkspace | head -1)
+          SCHEME=$(basename "$WS" .xcworkspace)
+          xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Release \
+            -sdk iphoneos -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
+
+      - name: Package the .ipa
+        working-directory: app/ios
+        run: |
+          mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/*.app Payload/
+          zip -r Trailmark.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trailmark-ipa
+          path: app/ios/Trailmark.ipa
